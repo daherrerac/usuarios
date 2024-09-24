@@ -9,6 +9,65 @@
 <body>
     <div class="container">
         <img src="https://png.pngtree.com/png-clipart/20230913/original/pngtree-pirate-treasure-chest-vector-png-image_11054717.png" alt="tesoro pirata" class="d-block mx-auto" style="max-height: 80vh;">
-    </div>
+
+        <h1>Usuarios Registrados</h1>
+        
+        <table id="usersTable" class="table" >
+            <thead>
+                <tr>
+                    <th>ID</th>
+                    <th>Nombre</th>
+                    <th>Email</th>
+                </tr>
+            </thead>
+            <tbody>
+                <!-- Aquí se llenarán los datos dinámicamente -->
+            </tbody>
+        </table>
+    
+        <script>
+            async function fetchUsers() {
+                try {
+                    const response = await fetch('http://localhost:5000/api/users/getall');
+                    const data = await response.json();
+    
+                    if (response.ok) {
+                        populateTable(data.users);
+                    } else {
+                        console.error('Error al obtener los usuarios:', data.message);
+                    }
+                } catch (error) {
+                    console.error('Error al conectar con el servidor:', error);
+                }
+            }
+    
+            function populateTable(users) {
+                const tableBody = document.querySelector('#usersTable tbody');
+                tableBody.innerHTML = '';  // Limpiar cualquier dato existente
+    
+                users.forEach(user => {
+                    const row = document.createElement('tr');
+    
+                    // Crear celdas para el ID, nombre y email
+                    const idCell = document.createElement('td');
+                    idCell.textContent = user.id;
+                    row.appendChild(idCell);
+    
+                    const nameCell = document.createElement('td');
+                    nameCell.textContent = user.nombre;
+                    row.appendChild(nameCell);
+    
+                    const emailCell = document.createElement('td');
+                    emailCell.textContent = user.email;
+                    row.appendChild(emailCell);
+    
+                    // Añadir la fila al cuerpo de la tabla
+                    tableBody.appendChild(row);
+                });
+            }
+    
+            // Llamada para obtener los usuarios cuando cargue la página
+            fetchUsers();
+        </script>
 </body>
 </html>

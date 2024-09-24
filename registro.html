@@ -18,15 +18,15 @@
     </header>
     <main>
         <div class="container">
-            <form id="registerForm" class="mx-auto">
+            <form id="registerForm" class="mx-auto" method="POST" >
                 <div class="mb-3">
                     <label for="name" class="form-label fw-bold">Nombre</label>
                     <input class="form-control border border-dark-subtle" id="name" type="text" placeholder="Ingrese nombre completo" aria-label="">
                 </div>
-                <div class="mb-3">
+                <!-- <div class="mb-3">
                     <label for="user" class="form-label fw-bold">Usuario</label>
                     <input class="form-control border border-dark-subtle" id="user" type="text" placeholder="Ingrese un usuario" aria-label="">
-                </div>
+                </div> -->
                 <div class="mb-3">
                     <label for="email" class="form-label fw-bold">Correo electrónico</label>
                     <input class="form-control border border-dark-subtle" id="email" type="text" placeholder="email@correo.com" aria-label="">
@@ -35,7 +35,7 @@
                     <label for="pass" class="form-label fw-bold">Contraseña</label>
                     <input class="form-control border border-dark-subtle" id="pass" type="password" placeholder="Contraseña" aria-label="">
                 </div>
-                <button type="button" class="btn btn-secondary" onclick="registroUsuario()">Registrarse</button>
+                <button type="submit" class="btn btn-secondary" >Registrarse</button>
                 <a href="index.html" class="d-block text-secondary mt-5">Ya estás registrado? Ingresa aquí</a>
             </form>
         </div>
@@ -45,5 +45,33 @@
     </footer>
     <script src="https://cdn.jsdelivr.net/npm/bootstrap@latest/dist/js/bootstrap.bundle.min.js"></script>
     <script src="main.js"></script>
+    <script>
+        document.getElementById('registerForm').addEventListener('submit', async function(event) {
+            event.preventDefault();  // Evita que se recargue la página
+            const nombre = document.getElementById('name').value;
+            const email = document.getElementById('email').value;
+            const password = document.getElementById('pass').value;
+    
+            try {
+                const response = await fetch('http://localhost:5000/api/users/create', {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json'
+                    },
+                    body: JSON.stringify({ nombre, email, password })
+                });
+    
+                const data = await response.json();
+                if (response.ok) {
+                    alert('Usuario creado con éxito');
+                } else {
+                    alert(`Error: ${data.error}`);
+                }
+            } catch (error) {
+                alert('Hubo un problema al crear el usuario.');
+            }
+        });
+    </script>
+    
 </body>
 </html>

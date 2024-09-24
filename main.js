@@ -17,16 +17,34 @@ function registroUsuario(){
         return;
     }
 
-    // Crear un objeto con los datos del usuario
-    const userData = {
+    // Crear un objeto con los datos del nuevo usuario
+    const newUser = {
         name: name,
         user: user,
         email: email,
         password: pass
     };
 
-     // Guardar los datos en localStorage (lo almacenamos bajo la clave 'userData')
-     localStorage.setItem('userData', JSON.stringify(userData));
+    // Obtener el arreglo de usuarios guardados en localStorage o crear uno nuevo si no existe
+    let users = JSON.parse(localStorage.getItem('users')) || [];
+
+    // Verificar si el usuario ya existe
+    const userExists = users.some(u => u.user === user);
+
+    if (userExists) {
+        Swal.fire({
+            icon: 'error',
+            title: 'Usuario ya registrado',
+            text: 'El usuario que intentas registrar ya existe.',
+            confirmButtonText: 'Ok'
+        });
+        return;
+    }
+
+    // Agregar el nuevo usuario al arreglo de usuarios
+    users.push(newUser);
+    // Guardar el nuevo arreglo de usuarios en localStorage
+    localStorage.setItem('users', JSON.stringify(users));
 
      // Confirmación usando SweetAlert
      Swal.fire({
@@ -47,30 +65,21 @@ function ingresoUsuario() {
     const userInput = document.querySelector('input[placeholder="Ingrese un usuario"]').value;
     const passInput = document.getElementById('pass').value;
 
-    // Obtener los datos almacenados en localStorage
-    const savedUserData = JSON.parse(localStorage.getItem('userData'));
+    // Obtener el arreglo de usuarios guardados en localStorage
+    const users = JSON.parse(localStorage.getItem('users')) || [];
 
-    // Verificar si existe un usuario guardado
-    if (!savedUserData) {
-        Swal.fire({
-            icon: 'error',
-            title: 'Error',
-            text: 'No hay ningún usuario registrado. Por favor, regístrate primero.',
-            confirmButtonText: 'Ok'
-        });
-        return;
-    }
+    // Verificar si el usuario existe en el arreglo de usuarios
+    const validUser = users.find(u => u.user === userInput && u.password === passInput);
 
-    // Comparar los datos ingresados con los almacenados
-    if (userInput === savedUserData.user && passInput === savedUserData.password) {
-        // Si coinciden, mostrar un mensaje de éxito y redirigir
+    if (validUser) {
+        // Si el usuario y la contraseña coinciden, mostrar un mensaje de éxito y redirigir
         Swal.fire({
             icon: 'success',
             title: 'Ingreso correcto',
-            text: 'Has ingresado correctamente.',
+            text: `Bienvenido, ${validUser.name}!`,
             confirmButtonText: 'Continuar'
         }).then(() => {
-            // Redirigir a la página "visto.html" después de que se cierra la alerta
+            // Redirigir a la página "visto.html"
             window.location.href = 'visto.html';
         });
     } else {
